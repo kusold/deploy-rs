@@ -11,15 +11,15 @@ use tokio::process::Command;
 
 #[derive(Error, Debug)]
 pub enum PushProfileError {
-    #[error("Failed to run Nix show-derivation command: {0}")]
+    #[error("Failed to run Nix derivation show command: {0}")]
     ShowDerivation(std::io::Error),
-    #[error("Nix show-derivation command resulted in a bad exit code: {0:?}")]
+    #[error("Nix derivation show command resulted in a bad exit code: {0:?}")]
     ShowDerivationExit(Option<i32>),
-    #[error("Nix show-derivation command output contained an invalid UTF-8 sequence: {0}")]
+    #[error("Nix derivation show command output contained an invalid UTF-8 sequence: {0}")]
     ShowDerivationUtf8(std::str::Utf8Error),
-    #[error("Failed to parse the output of nix show-derivation: {0}")]
+    #[error("Failed to parse the output of nix derivation show: {0}")]
     ShowDerivationParse(serde_json::Error),
-    #[error("Nix show-derivation output is empty")]
+    #[error("Nix derivation show output is empty")]
     ShowDerivationEmpty,
     #[error("Failed to run Nix build command: {0}")]
     Build(std::io::Error),
@@ -217,7 +217,7 @@ pub async fn build_profile(data: PushProfileData<'_>) -> Result<(), PushProfileE
         &data.deploy_data.profile.profile_settings.path
     );
 
-    // `nix-store --query --deriver` doesn't work on invalid paths, so we parse output of show-derivation :(
+    // `nix-store --query --deriver` doesn't work on invalid paths, so we parse output of derivation show :(
     let mut show_derivation_command = Command::new("nix");
 
     show_derivation_command
